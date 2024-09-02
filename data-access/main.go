@@ -6,9 +6,17 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
+
+type Client struct {
+	Client_id    int16
+	Company_name *string
+	Website_url  *string
+	Logo_url     *string
+}
 
 func main() {
 
@@ -17,19 +25,22 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	ctx := context.Background()
+	dbPool, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
+
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Unable to create connection pool: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
+	defer dbPool.Close()
 
-	var company_name string
-	err = conn.QueryRow(context.Background(), "select company_name from client where client_id=$1", 1).Scan(&company_name)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+	var clients []*Client
+	queryError := pgxscan.Select(ctx, dbPool, &clients, `SELECT client_id, company_name, website_url, logo_url FROM client`)
+
+	if queryError != nil {
+		fmt.Fprintf(os.Stderr, "Unable to query: %v\n", queryError)
 		os.Exit(1)
 	}
 
-	fmt.Println(company_name)
+	fmt.Print(len(clients))
 }
