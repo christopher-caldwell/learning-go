@@ -34,7 +34,7 @@ func main() {
 	}
 	defer dbPool.Close()
 
-	var clients []*Client
+	var clients []Client
 	queryError := pgxscan.Select(ctx, dbPool, &clients, `SELECT client_id, company_name, website_url, logo_url FROM client`)
 
 	if queryError != nil {
