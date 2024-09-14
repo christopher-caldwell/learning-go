@@ -3,9 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
+
+	"example/hello/car"
 )
 
+func getPointerOfInt(number *int) {
+	fmt.Printf("The address is %v and the value is %v", number, *number)
+}
+
 func main() {
+
+	car := car.New("Toyota", "Corolla", 2020)
+	someNUmber := 1
+	getPointerOfInt(&someNUmber)
+	car.Honk()
+
 	// Set properties of the predefined Logger, including
 	// the log entry prefix and a flag to disable printing
 	// the time, source file, and line number.
