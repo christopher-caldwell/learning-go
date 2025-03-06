@@ -110,6 +110,7 @@ components:
     Account:
       required:
         - name
+        - id
       properties:
         id:
           type: integer

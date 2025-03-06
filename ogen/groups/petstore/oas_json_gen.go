@@ -22,10 +22,8 @@ func (s *Account) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *Account) encodeFields(e *jx.Encoder) {
 	{
-		if s.ID.Set {
-			e.FieldStart("id")
-			s.ID.Encode(e)
-		}
+		e.FieldStart("id")
+		e.Int64(s.ID)
 	}
 	{
 		e.FieldStart("name")
@@ -48,9 +46,11 @@ func (s *Account) Decode(d *jx.Decoder) error {
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
 		case "id":
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				s.ID.Reset()
-				if err := s.ID.Decode(d); err != nil {
+				v, err := d.Int64()
+				s.ID = int64(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -79,7 +79,7 @@ func (s *Account) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000010,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

@@ -8,12 +8,12 @@ import (
 
 // Ref: #/components/schemas/Account
 type Account struct {
-	ID   OptInt64 `json:"id"`
-	Name string   `json:"name"`
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 // GetID returns the value of ID.
-func (s *Account) GetID() OptInt64 {
+func (s *Account) GetID() int64 {
 	return s.ID
 }
 
@@ -23,7 +23,7 @@ func (s *Account) GetName() string {
 }
 
 // SetID sets the value of ID.
-func (s *Account) SetID(val OptInt64) {
+func (s *Account) SetID(val int64) {
 	s.ID = val
 }
 
